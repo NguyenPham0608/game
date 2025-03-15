@@ -94,8 +94,8 @@ export default class Player {
             this.sx+=this.acceleration
         }
         if(this.game.up){
-            if(this.falling<111110){
-                this.sy=15
+            if(this.falling<2228){
+                this.sy+=1
             }
         }
         if(Math.abs(this.sx)<2){
