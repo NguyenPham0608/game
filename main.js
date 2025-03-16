@@ -24,7 +24,7 @@ export default class Game{
         this.mouseY = this.controls.mouseY;
 
 
-        this.level=new Level(this);
+        this.level=new Level(this,30,30);
         this.player = new Player(this);
         this.background = new Background(this);
         this.ground = new Ground(this);

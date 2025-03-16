@@ -3,7 +3,7 @@ export default class Tile {
         this.x=x;
         this.y=y;
         this.img=new Image();
-        this.img.src="images/tile.png";
+        this.img.src="images/10.png";
         this.game=game
     }
     update(){
