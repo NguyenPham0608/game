@@ -21,7 +21,7 @@ export default class Player {
         this.camX=0
         this.camY=0
         this.acceleration=1.4
-        this.gravity=0.2
+        this.gravity=0.6
         this.playerState="fall"
     }
     draw(ctx) {
@@ -62,7 +62,6 @@ export default class Player {
     }
     
     update(){
-        console.log(this.y)
         // this.camY+=(this.y-this.camY)/10
         this.sy-=this.gravity
         this.y-=this.sy
@@ -94,17 +93,17 @@ export default class Player {
             this.sx+=this.acceleration
         }
         if(this.game.up){
-            if(this.falling<2228){
-                this.sy+=1
+            if(this.falling<8){
+                this.sy=14
             }
         }
         if(Math.abs(this.sx)<2){
 
         }
         this.x+=this.sx
-        this.sx*=0.9
-        this.camX=this.x
-        this.camY=this.y
+        this.sx*=0.94
+        this.camX+=(this.x-this.camX)/6
+        this.camY+=(this.y-this.camY)/6
         this.limitCamera(0,1000000,0,1000)
     }
 

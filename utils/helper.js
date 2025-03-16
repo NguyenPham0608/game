@@ -4,7 +4,10 @@ export default class Controls {
         this.right = false;
         this.up = false;
         this.down = false;
-
+        this.mouseDown = false;
+        this.mouseX = 0;
+        this.mouseY = 0;
+        this.space=false
         this.#addKeyboardListeners();
     }
 
@@ -27,6 +30,9 @@ export default class Controls {
                 case "s":
                     this.down = true;
                     break;
+                case " ":
+                    this.space = true;
+                    break;
             }
         });
 
@@ -48,8 +54,21 @@ export default class Controls {
                 case "s":
                     this.down = false;
                     break;
+                case " ":
+                    this.space = false;
+                    break;
             }
         });
+        window.addEventListener("mousedown", () => {
+            this.mouseDown = true;
+        })
+        window.addEventListener("mouseup", () => {
+            this.mouseDown = false;
+        })
+        window.addEventListener("mousemove", (event) => {
+            this.mouseX = event.clientX;
+            this.mouseY = event.clientY;
+        })
     }
 }
 

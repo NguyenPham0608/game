@@ -5,6 +5,7 @@ import Background from "./scene/background.js";
 import Ground from "./scene/ground.js";
 import Controls from "./utils/helper.js";
 import Camera from "./utils/camera.js";
+import Level from "./scene/level.js";
 
 const canvas=document.getElementById('canvas');
 const ctx=canvas.getContext('2d');
@@ -17,7 +18,13 @@ export default class Game{
         this.right = false;
         this.up = false;
         this.down = false;
+        this.space=false
+        this.mouseDown = this.controls.mouseDown;
+        this.mouseX = this.controls.mouseX;
+        this.mouseY = this.controls.mouseY;
 
+
+        this.level=new Level(this);
         this.player = new Player(this);
         this.background = new Background(this);
         this.ground = new Ground(this);
@@ -33,6 +40,10 @@ export default class Game{
         this.right = this.controls.right;
         this.up = this.controls.up;
         this.down = this.controls.down;
+        this.mouseDown = this.controls.mouseDown;
+        this.mouseX = this.controls.mouseX;
+        this.mouseY = this.controls.mouseY;
+        this.space=this.controls.space  
         this.player.update();
         this.background.update();
         this.ground.update();
@@ -40,10 +51,10 @@ export default class Game{
         this.ground.draw(this.ctx);
         this.player.draw(this.ctx);
         this.camera.update();
+        this.level.update();
         this.camX=this.player.camX
         this.camY=this.player.camY
-
-    }
+    }   
 }
 
 const game=new Game(canvas,ctx);
