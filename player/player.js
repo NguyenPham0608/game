@@ -14,15 +14,18 @@ export default class Player {
         this.falling=0
         this.sx=0
         this.sy=0
-        this.offsetX=(this.spriteWidth*this.scale/2)
-        this.offsetY=(this.spriteHeight*this.scale/2)+19
-        this.x=300
-        this.y=0
+        this.offsetX=(this.spriteWidth*this.scale)/2
+        this.offsetY=(this.spriteHeight*this.scale)/2
+        this.height=(((this.spriteHeight-110)*this.scale)/2)
+
+        this.x=200
+        this.y=300
         this.camX=0
         this.camY=0
         this.acceleration=1.4
-        this.gravity=0.6
+        this.gravity=0
         this.playerState="fall"
+        this.solid=null
     }
     draw(ctx) {
 
@@ -46,7 +49,7 @@ export default class Player {
             ctx.scale(-1, 1); // Flip horizontally
             drawX = -(this.x -this.camX- this.offsetX +this.game.canvas.width/2 + this.spriteWidth * this.scale); 
         }
-        ctx.translate(drawX, this.y+this.offsetY-this.camY);
+        ctx.translate(drawX, this.y-this.camY-this.offsetY);
         ctx.drawImage(
             this.spriteSheet,
             spriteX,
@@ -64,15 +67,7 @@ export default class Player {
     update(){
         // this.camY+=(this.y-this.camY)/10
         this.sy-=this.gravity
-        this.y-=this.sy
-        if (this.y > this.game.canvas.height - this.game.ground.height) {
-            this.y = this.game.canvas.height - this.game.ground.height;
-            this.sy = 0;
-            this.falling = 0;
-        }else{
-            this.falling++
-            
-        }
+
         if(this.falling>0){
             if(this.sy>0){
                 this.playerState="jump"
@@ -86,25 +81,49 @@ export default class Player {
                 this.playerState="stand"
             }
         }
+        // if(this.game.left){
+        //     this.sx-=this.acceleration
+        // }
+        // if(this.game.right){
+        //     this.sx+=this.acceleration
+        // }
         if(this.game.left){
-            this.sx-=this.acceleration
+            this.sx=-5
+        }else{
+            if(this.game.right){
+                this.sx=5
+            }else{
+                this.sx=0
+            }
         }
-        if(this.game.right){
-            this.sx+=this.acceleration
-        }
-        if(this.game.up){
-            if(this.falling<8){
-                this.sy=14
+
+        // if(this.game.up){
+        //     if(this.falling<8){
+        //         this.sy=14
+        //     }
+        // }
+
+        if(this.game.down){
+            this.sy=-5
+        }else{
+            if(this.game.up){
+                this.sy=5
+            }else{
+                this.sy=0
             }
         }
         if(Math.abs(this.sx)<2){
 
         }
         this.x+=this.sx
-        this.sx*=0.94
-        this.camX+=(this.x-this.camX)/6
-        this.camY+=(this.y-this.camY)/6
-        this.limitCamera(0,1000000,0,1000)
+        this.fixCollisionInDirection(this.sx,0)
+        this.y-=this.sy
+        this.fixCollisionInDirection(0,-this.sy)
+        // this.sx*=0.94
+
+        
+        this.handleCamera()
+
     }
 
     limitCamera(xMin, xMax, yMin, yMax){
@@ -121,6 +140,37 @@ export default class Player {
             this.camY=yMin
         }
     }
-    
+    getTileAt(x,y){
+        const tileGridX = Math.floor((x / 32));
+        const tileGridY = Math.floor((y / 32));
+        const tileIndex = tileGridY +( this.game.level.gridHeight * tileGridX);
+        const tile=this.game.level.tileGrid[tileIndex]
+        // console.log(tile)
+        return tile
+    }
+    handleCamera(){
+        this.camX+=(this.x-this.camX)/6
+        this.camY+=(this.y-this.camY)/6
+        this.limitCamera(window.innerWidth/2,100000,0,10000)
+    }
 
+    fixCollisionInDirection(dx, dy){
+        this.solid=null
+        // const tile=this.getTileAt(this.x,this.y)
+        this.fixCollisionAtPoint(this.x, this.y-(this.height-10))
+        this.fixCollisionAtPoint(this.x, this.y)
+        this.fixCollisionAtPoint(this.x, this.y+this.height)
+
+        if(this.solid>0){
+            this.x-=dx
+            this.y-=dy
+        }
+    }
+    fixCollisionAtPoint(x,y){
+        const tile=this.getTileAt(x,y)
+        if(tile>2){
+            this.solid=10
+        }
+    }
+    
 }

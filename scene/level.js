@@ -14,19 +14,17 @@ export default class Level {
         this.tileY=0
         this.generateLevel();
         this.drawLevel();
-
+        console.log(this.tileGrid)
     }
     drawLevel(){
         this.tileIndex=0
-        this.tileX=16
-        for(let i=0;i<this.gridWidth;i++){
-            this.tileY=16
-            for(let j=0;j<this.gridHeight;j++){
-                const tileImg = new Image();
-                tileImg.src = `images/${this.tileGrid[this.tileIndex]}.png`;
-                console.log(tileImg)
+        this.tileX=(window.innerWidth/2)
 
-                this.addTile(this.tileX, this.tileY, tileImg);
+        for(let i=0;i<this.gridWidth;i++){
+            this.tileY=0
+            for(let j=0;j<this.gridHeight;j++){
+                const tileImgSrc = this.tileGrid[this.tileIndex];
+                this.addTile(this.tileX, this.tileY,tileImgSrc,this.tileIndex);
                 
                 this.tileY+=32
                 this.tileIndex++
@@ -38,8 +36,9 @@ export default class Level {
 
     }
     update(){
+        const mouseTileIndex=(this.getMouseTileIndex(this.game.controls.mouseX+(this.game.camX-window.innerWidth/2),this.game.controls.mouseY))
         if(this.game.controls.mouseDown){
-            this.addTile(this.game.controls.mouseX+this.game.camX-this.tileSize/2,this.game.controls.mouseY+this.game.camY-this.tileSize/2);
+            this.addTile(this.game.controls.mouseX+this.game.camX-this.tileSize/2,this.game.controls.mouseY+this.game.camY-this.tileSize/2,10,mouseTileIndex);
             
 
         }
@@ -48,21 +47,30 @@ export default class Level {
             tile.draw(this.game.ctx);
         });
         if(this.game.controls.space){
-            console.log(this.tiles)
+            // console.log(this.tileGrid)
         }
     }
-    addTile(x, y) {
+    addTile(x, y, tileImgSrc,index) {
         // Snap the x and y coordinates to the grid by rounding them to the nearest tile size
         const snappedX = Math.floor((x + this.tileSize / 2) / this.tileSize) * this.tileSize;
         const snappedY = Math.floor((y + this.tileSize / 2) / this.tileSize) * this.tileSize;
-    
         // Check if a tile already exists at the snapped position
         const tileExists = this.tiles.some(tile => tile.x === snappedX && tile.y === snappedY);
-    
-        // Only add the tile if there isn't already one at that position
-        if (!tileExists) {
-            this.tiles.push(new Tile(snappedX, snappedY, this.game));
+        if(tileExists){
+            const tileClone = this.tiles.find(tile => tile.x === snappedX && tile.y === snappedY);
+            console.log(tileClone.type)
+            if(tileClone.type==2){
+                console.log(tileClone)
+                this.tiles.push(new Tile(snappedX, snappedY, this.game, tileImgSrc, index));
+                tileClone.type=10
+                this.tileGrid[index]=10
+            }
+        }else{
+            this.tiles.push(new Tile(snappedX, snappedY, this.game, tileImgSrc,index));
+
         }
+        // Only add the tile if there isn't already one at that position
+
     }
     generateLevel(){
         this.addWallColumn();
@@ -84,5 +92,10 @@ export default class Level {
         }
         this.tileGrid.push(10);
     }
-    
+    getMouseTileIndex(x,y){
+        const tileGridX = Math.floor((x / 32));
+        const tileGridY = Math.floor((y / 32));
+        const tileIndex = tileGridY +( this.game.level.gridHeight * tileGridX);
+        return tileIndex
+    }
 }

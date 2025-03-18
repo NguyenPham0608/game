@@ -24,7 +24,7 @@ export default class Game{
         this.mouseY = this.controls.mouseY;
 
 
-        this.level=new Level(this,30,30);
+        this.level=new Level(this,300,Math.ceil(window.innerHeight/32));
         this.player = new Player(this);
         this.background = new Background(this);
         this.ground = new Ground(this);
@@ -49,9 +49,10 @@ export default class Game{
         this.ground.update();
         this.background.draw(this.ctx);
         this.ground.draw(this.ctx);
-        this.player.draw(this.ctx);
         this.camera.update();
         this.level.update();
+        this.player.draw(this.ctx);
+
         this.camX=this.player.camX
         this.camY=this.player.camY
     }   
